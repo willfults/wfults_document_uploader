@@ -1,0 +1,6 @@
+INDEX VERSION 1.122+C:\Users\wfults\wfults_document_uploader\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+492570900.index
+2408281653.index
+959268988.index
+2742370221.index
+466223050.index

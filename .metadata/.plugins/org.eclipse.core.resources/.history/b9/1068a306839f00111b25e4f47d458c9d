@@ -1,0 +1,45 @@
+
+
+function FolderListCtrl($scope, $http) {
+	//on page load
+	$scope.rootFolder = '/';	
+	
+	$http.get('/Document_Uploader/rest/folders/details?location=').success(function(data) {
+		$scope.details = data;
+	});
+	//end on page load
+	
+	$scope.setDetails = function(location) {
+		location = $scope.rootFolder + location;
+		/*if(location != "//"){
+			$scope.rootFolder = location  + "/";
+		}*/
+		$http.get('/Document_Uploader/rest/folders/details?location=' + location).success(function(data) {
+			$scope.details = data;
+		});
+	};
+	
+	$scope.createFolder = function(folderName) {
+		folderName = $scope.rootFolder + folderName;
+		$http.get('/Document_Uploader/rest/folders/create?folderName=' + folderName).success(function(data) {
+		});
+		alert('folder created');
+		$scope.setDetails("");
+	};
+	
+	$scope.deleteFolder = function(folderName) {
+		folderName = $scope.rootFolder + folderName;
+		$http.get('/Document_Uploader/rest/folders/delete?folderName=' + folderName).success(function(data) {
+		});
+		alert('folder deleted');
+		$scope.setDetails("");
+	};
+	
+	$scope.upOneFolder = function() {
+		var newLocation = $scope.rootFolder;
+		newLocation = newLocation.substring(0,newLocation.lastIndexOf("/"));
+		$scope.rootFolder = newLocation.substring(0,newLocation.lastIndexOf("/"));
+		$scope.setDetails("");
+	};
+}
+

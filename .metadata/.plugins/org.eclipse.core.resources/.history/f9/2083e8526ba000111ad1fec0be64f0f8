@@ -1,0 +1,113 @@
+package mypackage;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.POST;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.jboss.resteasy.annotations.providers.jaxb.json.BadgerFish;
+
+import util.DateUtil;
+
+@Path("/rest/folders")
+public class FolderResource {
+	
+	private final String DIRECTORY_LOCATION = "C:/jboss-4.2.2.GA";
+	
+	@GET
+	@Produces("application/json")
+	@Path("/details")
+	public List<Map<String, Object>> getFolderDetails(@QueryParam("location") String location) {
+	    File folderInfo = new File(DIRECTORY_LOCATION + "/" + location);
+	    File[] listOfFiles = folderInfo.listFiles();
+	    List<Map<String, Object>> folders = new ArrayList<Map<String, Object>>();
+	    for (File file : listOfFiles) {
+	        Map<String, Object> folder = new LinkedHashMap<String, Object>();
+	        if(file.isDirectory()){
+	        	folder.put("fileType","folder");
+	        }else{
+	        	folder.put("fileType", "file");
+	        }
+	        folder.put("name", file.getName());
+	        folder.put("size", file.length()/1000);
+	        folder.put("lastModified", DateUtil.getFormattedDate(new Date(file.lastModified())));
+	        folders.add(folder);
+	    }
+	    return folders;
+	}
+	
+	@GET
+	@Path("/create")
+	public void createFolder(@QueryParam("folderName") String folderName){
+		new File(DIRECTORY_LOCATION + "/" + folderName).mkdirs();
+	}
+	
+	@GET
+	@Path("/delete")
+	public boolean deleteDirectory(@QueryParam("folderName") String folderName) {
+		File path = new File(DIRECTORY_LOCATION + "/" + folderName);
+	    if (path.exists()) {
+	        File[] files = path.listFiles();
+	        for (int i = 0; i < files.length; i++) {
+	            if (files[i].isDirectory()) {
+	                deleteDirectory(files[i].getName());
+	            } else {
+	                files[i].delete();
+	            }
+	        }
+	    }
+	    return (path.delete());
+	}
+	
+	 @POST
+	 @Path("/upload/process")
+	 //@ProduceMime("text/plain")
+
+	 public String uploadProcess(@Context HttpServletRequest req) throws Exception {
+
+	  FileItemFactory factory = new DiskFileItemFactory();
+	  ServletFileUpload upload = new ServletFileUpload(factory);
+
+	  List  items = upload.parseRequest(req);
+	  Iterator iter = items.iterator();
+
+	  while (iter.hasNext()) {
+	      FileItem item = (FileItem) iter.next();
+
+	      if (item.isFormField()) {
+	          System.out.println("FORM FIELD");
+
+	      } else {
+	       if (!item.isFormField()) {
+
+	           String fileName = item.getName();
+	           System.out.println("File Name:" + fileName);
+
+	        File fullFile  = new File(item.getName());  
+	        File savedFile = new File("/", fullFile.getName());
+
+	        item.write(savedFile);
+	       }
+	      }
+	  }
+
+	  return "OK";
+	 }
+
+}

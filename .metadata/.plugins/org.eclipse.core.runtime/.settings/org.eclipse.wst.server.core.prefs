@@ -1,0 +1,4 @@
+#Fri May 04 12:22:37 PDT 2012
+module-start-timeout=300000
+runtimes=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<runtimes>\r\n  <runtime id\="JBoss v4.2" location\="C\:/jboss-4.2.2.GA/bin" name\="JBoss v4.2" runtime-type-id\="org.eclipse.jst.server.generic.runtime.jboss42" server_definition_id\="org.eclipse.jst.server.generic.runtime.jboss42" timestamp\="0" vm-install-id\="1336157205925" vm-install-type-id\="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType">\r\n    <map key\="generic_server_instance_properties" serverRootDirectory\="C\:/jboss-4.2.2.GA"/>\r\n  </runtime>\r\n</runtimes>\r\n
+eclipse.preferences.version=1

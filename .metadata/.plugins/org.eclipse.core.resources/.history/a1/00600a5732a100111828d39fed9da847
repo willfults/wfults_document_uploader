@@ -1,0 +1,55 @@
+
+
+function FolderListCtrl($scope, $http) {
+	//on page load
+	$http.get('/Document_Uploader/rest/folders/details?location=' + $scope.rootFolder).success(function(data) {
+		$scope.details = data;
+	});
+	//end on page load
+	
+	$scope.setDetails = function(location) {
+		location = $scope.rootFolder + location;
+		if(location != "//"){
+			$scope.rootFolder = location  + "/";
+		}
+		$http.get('/Document_Uploader/rest/folders/details?location=' + location).success(function(data) {
+			$scope.details = data;
+		});
+	};
+	
+	$scope.createFolder = function(folderName) {
+		folderName = $scope.rootFolder + folderName;
+		$http.get('/Document_Uploader/rest/folders/create?folderName=' + folderName).success(function(data) {
+			$.gritter.add({
+				title: 'Folder Created',
+				text: folderName
+			});
+			var rootFolder = $scope.rootFolder;
+			$scope.rootFolder = rootFolder.substring(0,rootFolder.length-1);
+			$scope.setDetails("");
+		});
+	};
+	
+	$scope.deleteFolder = function(folderName) {
+		folderName = $scope.rootFolder + folderName;
+		$http.get('/Document_Uploader/rest/folders/delete?folderName=' + folderName).success(function(data) {
+			$.gritter.add({
+				title: 'Deleted',
+				text: folderName
+			});
+			var rootFolder = $scope.rootFolder;
+			$scope.rootFolder = rootFolder.substring(0,rootFolder.length-1);
+			$scope.setDetails("");
+		});
+
+	};
+	
+	$scope.upOneFolder = function() {
+		var newLocation = $scope.rootFolder;
+		newLocation = newLocation.substring(0,newLocation.lastIndexOf("/"));
+		$scope.rootFolder = newLocation.substring(0,newLocation.lastIndexOf("/"));
+		$scope.setDetails("");
+	};
+	 
+}
+
